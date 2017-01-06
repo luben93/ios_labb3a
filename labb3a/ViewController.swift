@@ -18,24 +18,21 @@ class ViewController: UIViewController {
     var F = 0.90
     var magnet = 0.0{
         didSet{
-            magnetLabel.text = magnet.description
+            magnetLabel.text = Int(magnet).description
         }
     }
     var gyro = 0.0{
         didSet{
-            gyroLabel.text = magnet.description
+            gyroLabel.text = (gyro).description
         }
     }
 
     var acceler = 0.0{
         didSet{
-            degreeLabel.text = magnet.description
+            degreeLabel.text = Int(-180*acceler).description
         }
     }
 
-    private func filter(newval:Double, lastval:Double){
-        lastval = F * lastval + (1-F) * newval
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,7 +50,9 @@ class ViewController: UIViewController {
                 [weak self] (data: CMAccelerometerData?, error: Error?) in
                 //print(2)
                 if let acceleration = data?.acceleration {
-                    self?.acceler = acceleration.z
+                      self?.acceler  = self!.F * self!.acceler + (1-self!.F) * acceleration.z
+                    print(acceleration.z)
+
                 }
             }
         }
@@ -64,7 +63,8 @@ class ViewController: UIViewController {
                 [weak self] (data: CMGyroData?, error: Error?) in
                 //print(2)
                 if let rate = data?.rotationRate {
-                    self?.gyro = rate.z
+                    self?.gyro = self!.F * self!.gyro + (1-self!.F) * rate.z
+                    print(rate.z)
                 }
             }
         }
@@ -75,7 +75,9 @@ class ViewController: UIViewController {
                 [weak self] (data: CMMagnetometerData?, error: Error?) in
                 //print(2)
                 if let rate = data?.magneticField {
-                    self?.magnet = rate.z
+                    self?.magnet = self!.F * self!.magnet + (1-self!.F) * rate.z
+                    print(rate.z)
+
                 }
             }
         }
