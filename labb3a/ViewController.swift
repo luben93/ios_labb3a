@@ -4,7 +4,7 @@
 //
 //  Created by lucas persson on 2017-01-04.
 //  Copyright © 2017 lucas persson. All rights reserved.
-//
+//  inspired by: http://nshipster.com/cmdevicemotion/
 
 import UIKit
 import CoreMotion
@@ -12,26 +12,20 @@ import CoreMotion
 class ViewController: UIViewController {
 
     let manager = CMMotionManager()
-    @IBOutlet weak var magnetLabel: UILabel!
-    @IBOutlet weak var degreeLabel: UILabel!
-    @IBOutlet weak var gyroLabel: UILabel!
-    var F = 0.90
-    var magnet = 0.0{
+    @IBOutlet weak var magnetLabel: UILabel!//X
+    @IBOutlet weak var degreeLabel: UILabel!//Y
+    @IBOutlet weak var gyroLabel: UILabel!//Z
+    static let F = 0.90
+    
+    var tilt = ThreeAxis()
+    var acceleration = ThreeAxis(){
         didSet{
-            magnetLabel.text = Int(magnet).description
+            magnetLabel.text = Int(acceleration.x * 180 ).description
+            degreeLabel.text = Int(acceleration.y * 180 ).description
+            gyroLabel.text = Int(acceleration.z * 180 ).description
         }
     }
-    var gyro = 0.0{
-        didSet{
-            gyroLabel.text = (gyro).description
-        }
-    }
-
-    var acceler = 0.0{
-        didSet{
-            degreeLabel.text = Int(-180*acceler).description
-        }
-    }
+    
 
     
     override func viewDidLoad() {
@@ -49,46 +43,23 @@ class ViewController: UIViewController {
             manager.startAccelerometerUpdates(to: OperationQueue.main) {
                 [weak self] (data: CMAccelerometerData?, error: Error?) in
                 //print(2)
-                if let acceleration = data?.acceleration {
-                      self?.acceler  = self!.F * self!.acceler + (1-self!.F) * acceleration.z
-                    print(acceleration.z)
-
-                }
+                 self?.acceleration.filter(new: data!.acceleration)
+                
             }
         }
-        if manager.isGyroAvailable {
-            //print(1)
-            manager.gyroUpdateInterval = 0.1
-            manager.startGyroUpdates(to: OperationQueue.main) {
-                [weak self] (data: CMGyroData?, error: Error?) in
-                //print(2)
-                if let rate = data?.rotationRate {
-                    self?.gyro = self!.F * self!.gyro + (1-self!.F) * rate.z
-                    print(rate.z)
-                }
-            }
-        }
-        if manager.isMagnetometerAvailable {
-            //print(1)
-            manager.magnetometerUpdateInterval = 0.1
-            manager.startMagnetometerUpdates(to: OperationQueue.main) {
-                [weak self] (data: CMMagnetometerData?, error: Error?) in
-                //print(2)
-                if let rate = data?.magneticField {
-                    self?.magnet = self!.F * self!.magnet + (1-self!.F) * rate.z
-                    print(rate.z)
-
-                }
-            }
-        }
-        
+            
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    struct ThreeAxis {
+        var x = 0.0
+        var y = 0.0
+        var z = 0.0
+        mutating func filter(new:CMAcceleration){
+            x = F * self.x + (1 - F) * new.x
+            y = F * self.y + (1 - F) * new.y
+            z = F * self.z + (1 - F) * new.z
+        }
     }
-
 
 }
 
