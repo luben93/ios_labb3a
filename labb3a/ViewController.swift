@@ -4,7 +4,9 @@
 //
 //  Created by lucas persson on 2017-01-04.
 //  Copyright © 2017 lucas persson. All rights reserved.
-//  inspired by: http://nshipster.com/cmdevicemotion/
+//  inspired by:
+//  http://nshipster.com/cmdevicemotion/
+//  http://stackoverflow.com/questions/2317428/android-i-want-to-shake-it/11972661#11972661
 
 import UIKit
 import CoreMotion
