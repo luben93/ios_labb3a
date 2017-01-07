@@ -87,6 +87,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="background" destination="8bC-Xf-vdC" id="8Py-qJ-GSu"/>
                         <outlet property="degreeLabel" destination="0nm-22-zqJ" id="Hp2-5e-WLR"/>
                         <outlet property="gyroLabel" destination="AXM-qc-v9W" id="LnS-BR-kaE"/>
                         <outlet property="magnetLabel" destination="fx0-dL-1LV" id="XCS-OB-n4P"/>
